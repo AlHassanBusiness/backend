@@ -1,0 +1,20 @@
+import Profit from '../models/profit.model.js'
+
+export const createProfit = async (req, res) => {
+    try {
+        const { client, amount, store } = req.body
+
+        const newProfit = new Profit({
+            client,
+            amount,
+            store,
+        })
+        await newProfit.save()
+        return res.status(201).json({
+            message: 'Profit added',
+        })
+    } catch (error) {
+        console.log('Error in profit create controller', error.message)
+        return res.status(500).json({ error: 'Internal server error' })
+    }
+}
