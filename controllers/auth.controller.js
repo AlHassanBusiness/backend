@@ -1,7 +1,10 @@
 import bcrypt from 'bcryptjs'
 import Client from '../models/client.model.js'
 import Admin from '../models/admin.model.js'
-import generateTokenAndSetCookie from '../utils/generateToken.js'
+import {
+    generateAdminTokenAndSetCookie,
+    generateClientTokenAndSetCookie,
+} from '../utils/generateToken.js'
 
 export const login = async (req, res) => {
     try {
@@ -16,7 +19,7 @@ export const login = async (req, res) => {
             return res.status(400).json({ error: 'Invalid email or password' })
         }
 
-        generateTokenAndSetCookie(client._id, res)
+        generateClientTokenAndSetCookie(client._id, res)
 
         res.status(200).json({
             _id: client._id,
@@ -36,7 +39,7 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
     try {
-        res.cookie('jwt', '', { maxAge: 0 })
+        res.cookie('client_jwt', '', { maxAge: 0 })
         res.status(200).json({ message: 'Logged out successfully' })
     } catch (error) {
         console.log('Error in logout controller', error.message)
@@ -57,7 +60,7 @@ export const adminLogin = async (req, res) => {
             return res.status(400).json({ error: 'Invalid email or password' })
         }
 
-        generateTokenAndSetCookie(admin._id, res)
+        generateAdminTokenAndSetCookie(admin._id, res)
 
         const user = {
             _id: admin._id,
@@ -74,7 +77,7 @@ export const adminLogin = async (req, res) => {
 
 export const adminLogout = (req, res) => {
     try {
-        res.cookie('jwt', '', { maxAge: 0 })
+        res.cookie('admin_jwt', '', { maxAge: 0 })
         res.status(200).json({ message: 'Logged out successfully' })
     } catch (error) {
         console.log('Error in logout controller', error.message)

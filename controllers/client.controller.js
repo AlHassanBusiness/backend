@@ -1,6 +1,6 @@
 import Client from '../models/client.model.js'
 import companySchema from '../validations/company.schema.js'
-import Investment from "../models/investment.model.js"
+import Investment from '../models/investment.model.js'
 import Store from '../models/store.model.js'
 import bcrypt from 'bcryptjs'
 
@@ -31,9 +31,11 @@ export const getClient = async (req, res) => {
             return res.status(404).json({ error: 'Client not found' })
         }
 
-        const store = await Store.find({ client: client._id })
+        const investments = await Investment.find({ client: client._id })
+            .populate('store')
+            .populate('amount')
 
-        res.status(200).json({ data: { client, store } })
+        res.status(200).json({ data: { client, investments } })
     } catch (error) {
         console.log('Error in get client controller', error.message)
         res.status(500).json({ error: 'Internal Server Error' })

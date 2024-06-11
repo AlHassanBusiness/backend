@@ -23,8 +23,6 @@ const investmentSchema = new mongoose.Schema(
     { timestamps: true },
 )
 
-investmentSchema.index({ company: 1, store: 1 }, { unique: true })
-
 const Investment = mongoose.model('Investment', investmentSchema)
 
 export default Investment

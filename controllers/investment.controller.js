@@ -1,4 +1,5 @@
 import Investment from '../models/investment.model.js'
+import Store from '../models/store.model.js'
 
 export const getAllInvestments = async (req, res) => {
     try {
@@ -20,9 +21,14 @@ export const getAllInvestments = async (req, res) => {
 export const createInvestment = async (req, res) => {
     try {
         const { client, store, amount } = req.body
-
-        const investment = await Investment.create({ client, store, amount })
-
+        const foundStore = await Store.findById(store)
+        if (foundStore) {
+            await Store.updateOne(
+                { _id: store },
+                { $inc: { totalprofit: amount } },
+            )
+            await Investment.create({ client, store, amount })
+        }
         return res.status(201).json({
             message: 'Investment added',
         })

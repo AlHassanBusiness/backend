@@ -39,7 +39,8 @@ export const getStore = async (req, res) => {
             const allProfit = await Profit.find({
                 client: client._id,
             })
-                .select(['-client', '-store'])
+                .select('-client')
+                .populate('store')
                 .limit(10)
                 .sort({ createdAt: -1 })
             const profitAmount = profit.length > 0 ? profit[0].amount : 0
@@ -76,7 +77,8 @@ export const getProfitHistory = async (req, res) => {
             .sort({
                 createdAt: -1,
             })
-            .select(['-store', '-client'])
+            .select('-client')
+            .populate('store')
 
         return res.status(200).json({
             data: profits,
