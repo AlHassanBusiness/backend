@@ -7,10 +7,21 @@ export const getStore = async (req, res) => {
     try {
         const client = req.client
         if (client) {
-            const investment = await Investment.findOne({ client: client._id })
-                .lean()
+            const investments = await Investment.find({ client: client._id })
                 .populate('store')
+                .lean()
                 .exec()
+
+            const totalInvestment = investments.reduce(
+                (sum, inv) => sum + inv.amount,
+                0,
+            )
+
+            const firstStoreName =
+                investments.length > 0
+                    ? investments[0].store.name
+                    : 'No Store Found'
+
             const profit = await Profit.aggregate([
                 {
                     $match: {
@@ -36,37 +47,30 @@ export const getStore = async (req, res) => {
                     },
                 },
             ])
-            const allProfit = await Profit.find({
-                client: client._id,
-            })
+
+            const allProfit = await Profit.find({ client: client._id })
                 .select('-client')
                 .populate('store')
                 .limit(10)
                 .sort({ createdAt: -1 })
+                .lean()
+                .exec()
+
             const profitAmount = profit.length > 0 ? profit[0].amount : 0
-            if (investment) {
-                return res.status(200).json({
-                    data: investment,
-                    profit: profitAmount,
-                    profitHistory: allProfit,
-                })
-            } else {
-                console.log('Store not found')
-                return res.status(404).json({
-                    error: 'Store not found',
-                })
-            }
+
+            return res.status(200).json({
+                totalInvestment,
+                firstStoreName,
+                profit: profitAmount,
+                profitHistory: allProfit,
+            })
         } else {
             console.log('Client not found in request')
-            return res.status(400).json({
-                error: 'Client not found',
-            })
+            return res.status(400).json({ error: 'Client not found' })
         }
     } catch (error) {
         console.log('Error in get store controller client side', error.message)
-        return res.status(500).json({
-            error: 'Internal server error',
-        })
+        return res.status(500).json({ error: 'Internal server error' })
     }
 }
 
@@ -94,14 +98,25 @@ export const getProfitHistory = async (req, res) => {
 export const getInvestmentHistory = async (req, res) => {
     try {
         const client = req.client
+
+        // Fetch all investments of the client
         const investments = await Investment.find({
             client: client._id,
         })
-            .select('-client')
-            .populate('store')
+            .select(['-client', '-store'])
+            .sort({ createdAt: 1 })
+
+        let cumulativeAmount = 0
+        const investmentHistory = investments.map((investment) => {
+            cumulativeAmount += investment.amount
+            return {
+                ...investment.toObject(),
+                cumulativeAmount,
+            }
+        })
 
         return res.status(200).json({
-            data: investments,
+            data: investmentHistory,
         })
     } catch (error) {
         console.log('Error in get investments client side', error.message)
