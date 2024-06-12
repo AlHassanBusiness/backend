@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import connectDatabase from './database/db.js'
 import authRouter from './routes/auth.routes.js'
 import clientRouter from './routes/client.routes.js'
-import adminRouter from './routes/admin.routes.js'
+// import adminRouter from './routes/admin.routes.js'
 import storeRouter from './routes/store.routes.js'
 import investmentRouter from './routes/investment.routes.js'
 import profitRouter from './routes/profit.routes.js'
@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 8000
 
 app.use('/api/auth', authRouter)
 app.use('/api/clients', clientRouter)
-app.use('/api/admin', adminRouter)
+// app.use('/api/admin', adminRouter)
 app.use('/api/stores', storeRouter)
 app.use('/api/investments', investmentRouter)
 app.use('/api/profits', profitRouter)
@@ -41,6 +41,6 @@ app.use('/api/clientdashboard', dashboardClientRouter)
 // Run server
 
 app.listen(PORT, () => {
-    connectDatabase()
     console.log(`Server running on port ${PORT}`)
+    connectDatabase()
 })
