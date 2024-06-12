@@ -1,7 +1,7 @@
-import Admin from '../models/admin.model.js'
-import bcrypt from 'bcryptjs'
+const Admin = require('../models/admin.model')
+const bcrypt = require('bcryptjs')
 
-export const createAdmin = async (req, res) => {
+const createAdmin = async (req, res) => {
     try {
         const { name, email, password } = req.body
 
@@ -39,7 +39,7 @@ export const createAdmin = async (req, res) => {
     }
 }
 
-export const deleteAdmin = async (req, res) => {
+const deleteAdmin = async (req, res) => {
     try {
         const admin = await Admin.findById(req.params.id)
 
@@ -57,3 +57,5 @@ export const deleteAdmin = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
+
+module.exports = { createAdmin, deleteAdmin }

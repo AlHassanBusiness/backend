@@ -1,12 +1,12 @@
-import bcrypt from 'bcryptjs'
-import Client from '../models/client.model.js'
-import Admin from '../models/admin.model.js'
-import {
+const bcrypt = require('bcryptjs')
+const Client = require('../models/client.model')
+const Admin = require('../models/admin.model')
+const {
     generateAdminTokenAndSetCookie,
     generateClientTokenAndSetCookie,
-} from '../utils/generateToken.js'
+} = require('../utils/generateToken')
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { email, password } = req.body
         const client = await Client.findOne({ email })
@@ -37,7 +37,7 @@ export const login = async (req, res) => {
     }
 }
 
-export const logout = (req, res) => {
+const logout = (req, res) => {
     try {
         res.cookie('client_jwt', '', { maxAge: 0 })
         res.status(200).json({ message: 'Logged out successfully' })
@@ -47,7 +47,7 @@ export const logout = (req, res) => {
     }
 }
 
-export const adminLogin = async (req, res) => {
+const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body
         const admin = await Admin.findOne({ email })
@@ -75,7 +75,7 @@ export const adminLogin = async (req, res) => {
     }
 }
 
-export const adminLogout = (req, res) => {
+const adminLogout = (req, res) => {
     try {
         res.cookie('admin_jwt', '', { maxAge: 0 })
         res.status(200).json({ message: 'Logged out successfully' })
@@ -83,4 +83,11 @@ export const adminLogout = (req, res) => {
         console.log('Error in logout controller', error.message)
         res.status(500).json({ error: 'Internal Server Error' })
     }
+}
+
+module.exports = {
+    login,
+    logout,
+    adminLogin,
+    adminLogout,
 }

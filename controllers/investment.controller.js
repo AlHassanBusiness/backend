@@ -1,7 +1,7 @@
-import Investment from '../models/investment.model.js'
-import Store from '../models/store.model.js'
+const Investment = require('../models/investment.model')
+const Store = require('../models/store.model')
 
-export const getAllInvestments = async (req, res) => {
+const getAllInvestments = async (req, res) => {
     try {
         const investments = await Investment.find()
             .sort({ createdAt: -1 })
@@ -18,7 +18,7 @@ export const getAllInvestments = async (req, res) => {
     }
 }
 
-export const createInvestment = async (req, res) => {
+const createInvestment = async (req, res) => {
     try {
         const { client, store, amount } = req.body
         const foundStore = await Store.findById(store)
@@ -37,3 +37,5 @@ export const createInvestment = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
+
+module.exports = { getAllInvestments, createInvestment }

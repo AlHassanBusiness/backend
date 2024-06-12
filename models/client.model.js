@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
 const companySchema = new mongoose.Schema(
     {
@@ -44,4 +44,4 @@ const companySchema = new mongoose.Schema(
 
 const Client = mongoose.model('Client', companySchema)
 
-export default Client
+module.exports = Client

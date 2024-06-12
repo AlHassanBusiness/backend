@@ -1,10 +1,10 @@
-import Client from '../models/client.model.js'
-import companySchema from '../validations/company.schema.js'
-import Investment from '../models/investment.model.js'
-import Store from '../models/store.model.js'
-import bcrypt from 'bcryptjs'
+const Client = require('../models/client.model')
+const companySchema = require('../validations/company.schema')
+const Investment = require('../models/investment.model')
+const Store = require('../models/store.model')
+const bcrypt = require('bcryptjs')
 
-export const getClients = async (req, res) => {
+const getClients = async (req, res) => {
     try {
         let page = parseInt(req.query.page) || 0
         let resultsPerPage = 6
@@ -23,7 +23,7 @@ export const getClients = async (req, res) => {
     }
 }
 
-export const getClient = async (req, res) => {
+const getClient = async (req, res) => {
     try {
         const client = await Client.findById(req.params.id).select('-password')
 
@@ -42,7 +42,7 @@ export const getClient = async (req, res) => {
     }
 }
 
-export const createClient = async (req, res) => {
+const createClient = async (req, res) => {
     try {
         const value = await companySchema
             .validateAsync(req.body)
@@ -95,7 +95,7 @@ export const createClient = async (req, res) => {
     }
 }
 
-export const editClient = async (req, res) => {
+const editClient = async (req, res) => {
     try {
         const client = await Client.findById(req.params.id)
 
@@ -126,7 +126,7 @@ export const editClient = async (req, res) => {
     }
 }
 
-export const deleteClient = async (req, res) => {
+const deleteClient = async (req, res) => {
     try {
         const client = await Client.findById(req.params.id)
 
@@ -145,7 +145,7 @@ export const deleteClient = async (req, res) => {
     }
 }
 
-export const getDashboardDetails = async (req, res) => {
+const getDashboardDetails = async (req, res) => {
     try {
         const totalClients = await Client.countDocuments({})
         const totalStores = await Store.countDocuments({})
@@ -170,4 +170,13 @@ export const getDashboardDetails = async (req, res) => {
         console.log('Error in get dashboard details controller', error.message)
         res.status(500).json({ error: 'Internal Server Error' })
     }
+}
+
+module.exports = {
+    getClients,
+    getClient,
+    createClient,
+    editClient,
+    deleteClient,
+    getDashboardDetails,
 }

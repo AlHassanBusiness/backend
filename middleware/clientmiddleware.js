@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'
-import Client from '../models/client.model.js'
+const jwt = require('jsonwebtoken')
+const Client = require('../models/client.model')
 
 const protectRoute = async (req, res, next) => {
     try {
@@ -41,4 +41,4 @@ const protectRoute = async (req, res, next) => {
     }
 }
 
-export default protectRoute
+module.exports = protectRoute

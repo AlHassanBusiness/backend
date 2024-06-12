@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken'
+const jwt = require('jsonwebtoken')
 
 // For admin token
-export const generateAdminTokenAndSetCookie = (userId, res) => {
+const generateAdminTokenAndSetCookie = (userId, res) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
         expiresIn: '1d',
     })
@@ -15,7 +15,7 @@ export const generateAdminTokenAndSetCookie = (userId, res) => {
 }
 
 // For client token
-export const generateClientTokenAndSetCookie = (userId, res) => {
+const generateClientTokenAndSetCookie = (userId, res) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
         expiresIn: '1d',
     })
@@ -26,4 +26,9 @@ export const generateClientTokenAndSetCookie = (userId, res) => {
         // secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
     })
+}
+
+module.exports = {
+    generateAdminTokenAndSetCookie,
+    generateClientTokenAndSetCookie,
 }

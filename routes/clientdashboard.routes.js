@@ -1,16 +1,14 @@
-import express from 'express'
+const express = require('express')
 const router = express.Router()
-
-import clientMiddle from '../middleware/clientmiddleware.js'
-
-import {
+const protectedRoute = require('../middleware/protectRoute')
+const {
     getStore,
     getProfitHistory,
     getInvestmentHistory,
-} from '../controllers/clientdashboard.controller.js'
+} = require('../controllers/clientdashboard.controller')
 
-router.get('/', clientMiddle, getStore)
-router.get('/profit-history', clientMiddle, getProfitHistory)
-router.get('/investment-history', clientMiddle, getInvestmentHistory)
+router.get('/', protectedRoute, getStore)
+router.get('/profit-history', protectedRoute, getProfitHistory)
+router.get('/investment-history', protectedRoute, getInvestmentHistory)
 
-export default router
+module.exports = router

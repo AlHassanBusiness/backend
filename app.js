@@ -1,15 +1,15 @@
-import express from 'express'
-import cors from 'cors'
-import CookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
-import connectDatabase from './database/db.js'
-import authRouter from './routes/auth.routes.js'
-import clientRouter from './routes/client.routes.js'
-// import adminRouter from './routes/admin.routes.js'
-import storeRouter from './routes/store.routes.js'
-import investmentRouter from './routes/investment.routes.js'
-import profitRouter from './routes/profit.routes.js'
-import dashboardClientRouter from './routes/clientdashboard.routes.js'
+const express = require('express')
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
+const dotenv = require('dotenv')
+const connectDatabase = require('./database/db')
+const authRouter = require('./routes/auth.routes')
+const clientRouter = require('./routes/client.routes')
+// const adminRouter = require('./routes/admin.routes.js'); // Uncomment if needed
+const storeRouter = require('./routes/store.routes')
+const investmentRouter = require('./routes/investment.routes')
+const profitRouter = require('./routes/profit.routes')
+const dashboardClientRouter = require('./routes/clientdashboard.routes')
 
 const app = express()
 
@@ -21,7 +21,7 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }
-app.use(CookieParser())
+app.use(cookieParser())
 app.use(express.json())
 
 app.use(cors(corsOptions))

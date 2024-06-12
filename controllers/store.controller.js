@@ -1,6 +1,6 @@
-import Store from '../models/store.model.js'
+const Store = require('../models/store.model')
 
-export const createStore = async (req, res) => {
+const createStore = async (req, res) => {
     try {
         const { name } = req.body
         const existingStore = await Store.findOne({ name: name })
@@ -24,7 +24,7 @@ export const createStore = async (req, res) => {
     }
 }
 
-export const getallstores = async (req, res) => {
+const getallstores = async (req, res) => {
     try {
         const stores = await Store.find().sort({ createdAt: -1 })
 
@@ -37,7 +37,7 @@ export const getallstores = async (req, res) => {
     }
 }
 
-export const deleteStore = async (req, res) => {
+const deleteStore = async (req, res) => {
     try {
         const { id } = req.params
         const store = await Store.findById(id)
@@ -56,4 +56,10 @@ export const deleteStore = async (req, res) => {
         console.log('Error in delete  store contorller', error.message)
         res.status(500).json({ error: 'Internal Server Error' })
     }
+}
+
+module.exports = {
+    createStore,
+    getallstores,
+    deleteStore,
 }

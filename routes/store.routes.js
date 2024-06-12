@@ -1,15 +1,15 @@
-import express from 'express'
+const express = require('express')
 const router = express.Router()
-import protectedRoute from '../middleware/protectRoute.js'
+const protectedRoute = require('../middleware/protectRoute')
 
-import {
+const {
     createStore,
     deleteStore,
     getallstores,
-} from '../controllers/store.controller.js'
+} = require('../controllers/store.controller')
 
 router.post('/', protectedRoute, createStore)
 router.get('/', protectedRoute, getallstores)
 router.delete('/:id', protectedRoute, deleteStore)
 
-export default router
+module.exports = router

@@ -1,4 +1,4 @@
-import Joi from 'joi'
+const Joi = require('joi')
 
 const companySchema = Joi.object({
     name: Joi.string().required().min(3).max(30).messages({
@@ -41,5 +41,4 @@ const companySchema = Joi.object({
         'string.base': 'Account holder name must be a string',
     }),
 })
-
-export default companySchema
+module.exports = companySchema

@@ -1,6 +1,6 @@
-import Profit from '../models/profit.model.js'
+const Profit = require('../models/profit.model')
 
-export const createProfit = async (req, res) => {
+const createProfit = async (req, res) => {
     try {
         const { client, amount, store } = req.body
 
@@ -18,3 +18,5 @@ export const createProfit = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' })
     }
 }
+
+module.exports = { createProfit }

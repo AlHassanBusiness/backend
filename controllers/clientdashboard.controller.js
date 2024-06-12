@@ -1,9 +1,7 @@
-import Client from '../models/client.model.js'
-import Store from '../models/store.model.js'
-import Investment from '../models/investment.model.js'
-import Profit from '../models/profit.model.js'
+const Investment = require('../models/investment.model')
+const Profit = require('../models/profit.model')
 
-export const getStore = async (req, res) => {
+const getStore = async (req, res) => {
     try {
         const client = req.client
         if (client) {
@@ -74,7 +72,7 @@ export const getStore = async (req, res) => {
     }
 }
 
-export const getProfitHistory = async (req, res) => {
+const getProfitHistory = async (req, res) => {
     try {
         const client = req.client
         const profits = await Profit.find({ client: client._id })
@@ -95,7 +93,7 @@ export const getProfitHistory = async (req, res) => {
     }
 }
 
-export const getInvestmentHistory = async (req, res) => {
+const getInvestmentHistory = async (req, res) => {
     try {
         const client = req.client
 
@@ -124,4 +122,10 @@ export const getInvestmentHistory = async (req, res) => {
             error: 'Internal server error',
         })
     }
+}
+
+module.exports = {
+    getStore,
+    getProfitHistory,
+    getInvestmentHistory,
 }
