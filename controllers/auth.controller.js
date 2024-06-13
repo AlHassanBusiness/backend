@@ -6,16 +6,26 @@ const {
     generateClientTokenAndSetCookie,
 } = require('../utils/generateToken')
 
+// Optimize bcrypt usage
+const bcryptCompare = (password, hash) =>
+    new Promise((resolve, reject) => {
+        bcrypt.compare(password, hash, (err, res) => {
+            if (err) return reject(err)
+            resolve(res)
+        })
+    })
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body
-        const client = await Client.findOne({ email })
-        const isPasswordCorrect = await bcrypt.compare(
-            password,
-            client?.password || '',
-        )
 
-        if (!client || !isPasswordCorrect) {
+        const client = await Client.findOne({ email }).lean().exec()
+        if (!client) {
+            return res.status(400).json({ error: 'Invalid email or password' })
+        }
+
+        const isPasswordCorrect = await bcryptCompare(password, client.password)
+        if (!isPasswordCorrect) {
             return res.status(400).json({ error: 'Invalid email or password' })
         }
 
@@ -51,13 +61,14 @@ const adminLogin = async (req, res) => {
     try {
         console.log('Logging in admin')
         const { email, password } = req.body
-        const admin = await Admin.findOne({ email })
-        const isPasswordCorrect = await bcrypt.compare(
-            password,
-            admin?.password || '',
-        )
 
-        if (!admin || !isPasswordCorrect) {
+        const admin = await Admin.findOne({ email }).lean().exec()
+        if (!admin) {
+            return res.status(400).json({ error: 'Invalid email or password' })
+        }
+
+        const isPasswordCorrect = await bcryptCompare(password, admin.password)
+        if (!isPasswordCorrect) {
             return res.status(400).json({ error: 'Invalid email or password' })
         }
 
