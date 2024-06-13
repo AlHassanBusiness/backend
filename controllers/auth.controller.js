@@ -49,6 +49,7 @@ const logout = (req, res) => {
 
 const adminLogin = async (req, res) => {
     try {
+        console.log('Logging in admin')
         const { email, password } = req.body
         const admin = await Admin.findOne({ email })
         const isPasswordCorrect = await bcrypt.compare(
