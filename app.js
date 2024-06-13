@@ -27,6 +27,7 @@ app.use(express.json())
 app.use(cors(corsOptions))
 
 const PORT = process.env.PORT || 8000
+console.log(PORT)
 
 // Routes
 
