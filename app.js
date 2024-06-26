@@ -16,7 +16,7 @@ const app = express()
 dotenv.config()
 
 const corsOptions = {
-    origin: ['https://admin-kappa-orpin.vercel.app', 'http://localhost:5174'],
+    origin: ['https://admin-kappa-orpin.vercel.app', 'https://client-eight-theta-44.vercel.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
