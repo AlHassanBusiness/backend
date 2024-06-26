@@ -103,17 +103,25 @@ const editClient = async (req, res) => {
             return res.status(404).json({ error: 'Client not found' })
         }
 
+        let updatedData = {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            address: req.body.address,
+            bankname: req.body.bankname,
+            accountno: req.body.accountno,
+            accountholdername: req.body.accountholdername,
+        }
+
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(req.body.password, salt)
+            updatedData.password = hashedPassword
+        }
+
         const updatedClient = await Client.findByIdAndUpdate(
             req.params.id,
-            {
-                name: req.body.name,
-                email: req.body.email,
-                phone: req.body.phone,
-                address: req.body.address,
-                bankname: req.body.bankname,
-                accountno: req.body.accountno,
-                accountholdername: req.body.accountholdername,
-            },
+            updatedData,
             { new: true },
         )
 
