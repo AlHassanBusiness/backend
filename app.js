@@ -5,7 +5,7 @@ const dotenv = require('dotenv')
 const connectDatabase = require('./database/db')
 const authRouter = require('./routes/auth.routes')
 const clientRouter = require('./routes/client.routes')
-// const adminRouter = require('./routes/admin.routes.js'); // Uncomment if needed
+const adminRouter = require('./routes/admin.routes.js') // Uncomment if needed
 const storeRouter = require('./routes/store.routes')
 const investmentRouter = require('./routes/investment.routes')
 const profitRouter = require('./routes/profit.routes')
@@ -16,7 +16,7 @@ const app = express()
 dotenv.config()
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -27,13 +27,12 @@ app.use(express.json())
 app.use(cors(corsOptions))
 
 const PORT = process.env.PORT || 8000
-console.log(PORT)
 
 // Routes
 
 app.use('/api/auth', authRouter)
 app.use('/api/clients', clientRouter)
-// app.use('/api/admin', adminRouter)
+app.use('/api/admin', adminRouter)
 app.use('/api/stores', storeRouter)
 app.use('/api/investments', investmentRouter)
 app.use('/api/profits', profitRouter)

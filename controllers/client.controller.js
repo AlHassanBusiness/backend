@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs')
 const getClients = async (req, res) => {
     try {
         let page = parseInt(req.query.page) || 0
-        let resultsPerPage = 6
+        let resultsPerPage = 10
         const totalClients = await Client.countDocuments({})
         const clients = await Client.find({})
             .sort({ createdAt: 'descending' })

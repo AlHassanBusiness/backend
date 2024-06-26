@@ -1,5 +1,6 @@
 const Investment = require('../models/investment.model')
 const Profit = require('../models/profit.model')
+const Client = require('../models/client.model')
 
 const getStore = async (req, res) => {
     try {
@@ -16,9 +17,7 @@ const getStore = async (req, res) => {
             )
 
             const firstStoreName =
-                investments.length > 0
-                    ? investments[0].store.name
-                    : 'No Store Found'
+                investments.length > 0 ? investments[0].store.name : null
 
             const profit = await Profit.aggregate([
                 {
@@ -75,15 +74,24 @@ const getStore = async (req, res) => {
 const getProfitHistory = async (req, res) => {
     try {
         const client = req.client
+        let page = parseInt(req.query.page) || 0
+        let resultsPerPage = 20
+        const totalProfits = await Profit.countDocuments({
+            client: client._id,
+        })
+
         const profits = await Profit.find({ client: client._id })
             .sort({
                 createdAt: -1,
             })
             .select('-client')
             .populate('store')
+            .limit(resultsPerPage)
+            .skip(page * resultsPerPage)
 
         return res.status(200).json({
             data: profits,
+            total: totalProfits,
         })
     } catch (error) {
         console.log('Error in get profit history client side', error.message)
@@ -96,13 +104,20 @@ const getProfitHistory = async (req, res) => {
 const getInvestmentHistory = async (req, res) => {
     try {
         const client = req.client
+        let page = parseInt(req.query.page) || 0
+        const resultsPerPage = 20
 
-        // Fetch all investments of the client
-        const investments = await Investment.find({
+        // Fetch the total count of investments for pagination
+        const totalInvestments = await Investment.countDocuments({
             client: client._id,
         })
-            .select(['-client', '-store'])
-            .sort({ createdAt: 1 })
+
+        // Fetch investments for the current page
+        const investments = await Investment.find({ client: client._id })
+            .select(['-client'])
+            .sort({ createdAt: -1 })
+            .limit(resultsPerPage)
+            .skip(page * resultsPerPage)
 
         let cumulativeAmount = 0
         const investmentHistory = investments.map((investment) => {
@@ -115,9 +130,25 @@ const getInvestmentHistory = async (req, res) => {
 
         return res.status(200).json({
             data: investmentHistory,
+            total: totalInvestments,
         })
     } catch (error) {
         console.log('Error in get investments client side', error.message)
+        return res.status(500).json({
+            error: 'Internal server error',
+        })
+    }
+}
+
+const getClientProfile = async (req, res) => {
+    try {
+        const client = req.client
+
+        return res.status(200).json({
+            data: client,
+        })
+    } catch (error) {
+        console.log('Error in get client profile client side', error.message)
         return res.status(500).json({
             error: 'Internal server error',
         })
@@ -128,4 +159,5 @@ module.exports = {
     getStore,
     getProfitHistory,
     getInvestmentHistory,
+    getClientProfile,
 }
