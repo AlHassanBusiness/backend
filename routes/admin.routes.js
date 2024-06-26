@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-import { createAdmin, deleteAdmin } from '../controllers/admin.controller.js'
+const { createAdmin, deleteAdmin } = require('../controllers/admin.controller')
 
 router.post('/', createAdmin)
 router.delete('/:id', deleteAdmin)
