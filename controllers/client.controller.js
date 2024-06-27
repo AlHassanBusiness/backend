@@ -1,6 +1,7 @@
 const Client = require('../models/client.model')
 const companySchema = require('../validations/company.schema')
 const Investment = require('../models/investment.model')
+const Profit = require('../models/profit.model')
 const Store = require('../models/store.model')
 const bcrypt = require('bcryptjs')
 
@@ -141,6 +142,14 @@ const deleteClient = async (req, res) => {
         if (!client) {
             return res.status(404).json({ error: 'Client not found' })
         }
+
+        await Investment.deleteMany({
+            client: client._id,
+        })
+
+        await Profit.deleteMany({
+            client: client._id,
+        })
 
         await Client.findByIdAndDelete(req.params.id)
 
