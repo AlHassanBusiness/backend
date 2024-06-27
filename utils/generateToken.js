@@ -7,6 +7,8 @@ const jwtOptions = {
 const cookieOptions = {
     maxAge: 1 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    sameSite: 'None',
+    secure: process.env.NODE_ENV === 'production',
 }
 
 const generateAdminTokenAndSetCookie = (userId, res) => {
