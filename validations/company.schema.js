@@ -32,9 +32,9 @@ const companySchema = Joi.object({
         'any.required': 'Bank name is required',
         'string.base': 'Bank name must be a string',
     }),
-    accountno: Joi.number().required().messages({
+    accountno: Joi.string().required().messages({
         'any.required': 'Account number is required',
-        'number.base': 'Account number must be a number',
+        'string.base': 'Account number must be a string',
     }),
     accountholdername: Joi.string().required().messages({
         'any.required': 'Account holder name is required',

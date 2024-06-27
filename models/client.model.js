@@ -31,7 +31,7 @@ const companySchema = new mongoose.Schema(
             required: true,
         },
         accountno: {
-            type: Number,
+            type: String,
             required: true,
         },
         accountholdername: {
