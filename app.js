@@ -16,7 +16,10 @@ const app = express()
 dotenv.config()
 
 const corsOptions = {
-    origin: ['https://admin-kappa-orpin.vercel.app', 'https://client-eight-theta-44.vercel.app'],
+    origin: [
+        'https://superadmin.amazoonaustralia.com',
+        'https://sellercenteral.amazoonaustralia.com',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
