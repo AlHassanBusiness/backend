@@ -13,12 +13,6 @@ const investmentSchema = new mongoose.Schema(
             required: true,
             min: [0, 'Amount must be positive'],
         },
-        store: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Store',
-            required: true,
-            index: true,
-        },
     },
     { timestamps: true },
 )
@@ -26,3 +20,5 @@ const investmentSchema = new mongoose.Schema(
 const Investment = mongoose.model('Investment', investmentSchema)
 
 module.exports = Investment
+
+

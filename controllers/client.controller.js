@@ -3,6 +3,8 @@ const companySchema = require('../validations/company.schema')
 const Investment = require('../models/investment.model')
 const Profit = require('../models/profit.model')
 const Store = require('../models/store.model')
+const DecidedProfit =require('../models/decidedprofit.model')
+const Sales = require('../models/sales.model')
 const bcrypt = require('bcryptjs')
 
 const getClients = async (req, res) => {
@@ -24,19 +26,33 @@ const getClients = async (req, res) => {
     }
 }
 
+const getAllClients = async(req,res) => {
+    try {
+        const clients = await Client.find().lean() 
+
+        return res.status(200).json({data: clients})
+
+    } catch (error) {
+        console.error("Error while fetching all clients",error.message)
+        return res.status(500).json({error: error.message})
+    }
+}
+
+
 const getClient = async (req, res) => {
     try {
-        const client = await Client.findById(req.params.id).select('-password')
+        const client = await Client.findOne({_id: req.params.id}).populate('store').select('-password')
 
         if (!client) {
             return res.status(404).json({ error: 'Client not found' })
         }
 
-        const investments = await Investment.find({ client: client._id })
-            .populate('store')
-            .populate('amount')
 
-        res.status(200).json({ data: { client, investments } })
+        const investments = await Investment.find({ client: client._id })
+
+        const decidedProfits = await DecidedProfit.find({client: client._id})
+
+        res.status(200).json({ data: { client, investments,decidedProfits } })
     } catch (error) {
         console.log('Error in get client controller', error.message)
         res.status(500).json({ error: 'Internal Server Error' })
@@ -78,6 +94,7 @@ const createClient = async (req, res) => {
                 bankname: req.body.bankname,
                 accountno: req.body.accountno,
                 accountholdername: req.body.accountholdername,
+                store: req.body.store 
             })
 
             if (newClient) {
@@ -151,6 +168,14 @@ const deleteClient = async (req, res) => {
             client: client._id,
         })
 
+        await DecidedProfit.deleteMany({
+            client: client._id 
+        })
+
+        await Sales.deleteMany({
+            client: client._id 
+        })
+
         await Client.findByIdAndDelete(req.params.id)
 
         res.status(200).json({
@@ -196,4 +221,5 @@ module.exports = {
     editClient,
     deleteClient,
     getDashboardDetails,
+    getAllClients
 }

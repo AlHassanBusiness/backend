@@ -19,7 +19,9 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body
 
-        const client = await Client.findOne({ email }).lean().exec()
+        const client = await Client.findOne({ email }).populate('store').lean()
+
+        const store = client.store
         if (!client) {
             return res.status(400).json({ error: 'Invalid email or password' })
         }
@@ -40,6 +42,7 @@ const login = async (req, res) => {
             bankname: client.bankname,
             accountno: client.accountno,
             accountholdername: client.accountholdername,
+            store
         })
     } catch (error) {
         console.log('Error in login controller', error.message)
@@ -59,7 +62,6 @@ const logout = (req, res) => {
 
 const adminLogin = async (req, res) => {
     try {
-        console.log('Logging in admin')
         const { email, password } = req.body
 
         const admin = await Admin.findOne({ email }).lean().exec()

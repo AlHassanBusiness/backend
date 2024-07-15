@@ -1,5 +1,6 @@
 const Investment = require('../models/investment.model')
 const Store = require('../models/store.model')
+const Client = require('../models/client.model')
 
 const getAllInvestments = async (req, res) => {
     try {
@@ -13,8 +14,13 @@ const getAllInvestments = async (req, res) => {
         const investments = await Investment.find()
             .sort({ createdAt: -1 })
             .lean()
-            .populate('client', '-password')
-            .populate('store')
+            .populate({
+                path: 'client',
+                select: '-password',
+                populate: {
+                  path: 'store'  
+                }
+              })
             .limit(resultsPerPage)
             .skip(page * resultsPerPage)
 
@@ -30,14 +36,14 @@ const getAllInvestments = async (req, res) => {
 
 const createInvestment = async (req, res) => {
     try {
-        const { client, store, amount } = req.body
-        const foundStore = await Store.findById(store)
-        if (foundStore) {
+        const { client, amount } = req.body
+        const foundClient = await Client.findById(client)
+        if (foundClient) {
             await Store.updateOne(
-                { _id: store },
+                { _id: foundClient.store },
                 { $inc: { totalprofit: amount } },
             )
-            await Investment.create({ client, store, amount })
+            await Investment.create({ client, amount })
         }
         return res.status(201).json({
             message: 'Investment added',
@@ -48,4 +54,23 @@ const createInvestment = async (req, res) => {
     }
 }
 
-module.exports = { getAllInvestments, createInvestment }
+const getTotalInvestmentOfClient = async (req, res) => {
+    try {
+        const id= req.params.id;
+
+        const investments = await Investment.find({client: id})
+
+        let totalAmount =0
+        for(let i = 0; i<investments.length ; i++) {
+            totalAmount+= investments[i].amount
+        }
+        res.status(200).json({ totalAmount });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+
+
+module.exports = { getAllInvestments, createInvestment,getTotalInvestmentOfClient }

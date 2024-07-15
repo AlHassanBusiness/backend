@@ -40,5 +40,9 @@ const companySchema = Joi.object({
         'any.required': 'Account holder name is required',
         'string.base': 'Account holder name must be a string',
     }),
+    store: Joi.string().required().messages({
+        'any.required': 'Store is required',
+        'string.base': 'Store is required'
+    })
 })
 module.exports = companySchema

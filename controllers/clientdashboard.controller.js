@@ -1,13 +1,13 @@
 const Investment = require('../models/investment.model')
 const Profit = require('../models/profit.model')
-const Client = require('../models/client.model')
+const DecidedProfit = require('../models/decidedprofit.model')
+const Sales = require('../models/sales.model')
 
 const getStore = async (req, res) => {
     try {
         const client = req.client
         if (client) {
             const investments = await Investment.find({ client: client._id })
-                .populate('store')
                 .lean()
                 .exec()
 
@@ -16,8 +16,33 @@ const getStore = async (req, res) => {
                 0,
             )
 
-            const firstStoreName =
-                investments.length > 0 ? investments[0].store.name : null
+            // Get the current month and year
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-indexed month
+
+            const decidedProfit =await DecidedProfit.findOne(
+                    {
+                        client: client._id,
+                        createdAt: {
+                        $gte: new Date(`${currentYear}-${currentMonth}-01`),
+                        $lt: new Date(`${currentYear}-${currentMonth + 1}-01`)
+                    }
+                }
+            )
+
+            const salesHistory = await Sales.find(
+                {
+                    client: client._id,
+                    createdAt: {
+                        $gte: new Date(`${currentYear}-${currentMonth}-01`),
+                        $lt: new Date(`${currentYear}-${currentMonth + 1}-01`)
+                    }
+                }
+            ).populate('product').limit(5).lean()
+
+
+            const sales = decidedProfit?.to_client
 
             const profit = await Profit.aggregate([
                 {
@@ -45,21 +70,13 @@ const getStore = async (req, res) => {
                 },
             ])
 
-            const allProfit = await Profit.find({ client: client._id })
-                .select('-client')
-                .populate('store')
-                .limit(10)
-                .sort({ createdAt: -1 })
-                .lean()
-                .exec()
-
             const profitAmount = profit.length > 0 ? profit[0].amount : 0
 
             return res.status(200).json({
                 totalInvestment,
-                firstStoreName,
                 profit: profitAmount,
-                profitHistory: allProfit,
+                sales,
+                salesHistory
             })
         } else {
             console.log('Client not found in request')
@@ -155,9 +172,38 @@ const getClientProfile = async (req, res) => {
     }
 }
 
+const getClientSales = async(req,res) => {
+        try {
+            const requestClient = req.client
+    
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-indexed month
+    
+            const sales = await Sales.find(
+                {
+                client: requestClient._id,
+                createdAt: {
+                    $gte: new Date(`${currentYear}-${currentMonth}-01`),
+                    $lt: new Date(`${currentYear}-${currentMonth + 1}-01`)
+                }
+            })
+            .populate('product')
+            .lean()
+    
+            return res.status(200).json({data: sales})
+    
+        } catch (error) {
+            console.error("Error in getting sales of client",error.message)
+            return res.status(500).json({error: error.message})
+        }
+    
+}
+
 module.exports = {
     getStore,
     getProfitHistory,
     getInvestmentHistory,
     getClientProfile,
+    getClientSales
 }

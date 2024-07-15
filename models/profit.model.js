@@ -11,11 +11,6 @@ const profitSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        store: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Store',
-            required: true,
-        },
     },
     { timestamps: true },
 )
