@@ -2,12 +2,11 @@ const Profit = require('../models/profit.model')
 
 const createProfit = async (req, res) => {
     try {
-        const { client, amount, store } = req.body
+        const { client, amount } = req.body
 
         const newProfit = new Profit({
             client,
-            amount,
-            store,
+            amount
         })
         await newProfit.save()
         return res.status(201).json({
