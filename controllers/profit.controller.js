@@ -6,7 +6,7 @@ const createProfit = async (req, res) => {
 
         const newProfit = new Profit({
             client,
-            amount
+            amount,
         })
         await newProfit.save()
         return res.status(201).json({
