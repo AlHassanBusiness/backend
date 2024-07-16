@@ -1,5 +1,5 @@
 const Product = require('../models/product.model')
-const upload = require('../utils/upload')
+const {uploadToImageKit,upload} = require('../utils/upload')
 
 
 
@@ -15,37 +15,40 @@ const getProducts = async(req,res) => {
 
 const createProduct = async(req,res) => {
     try {
-        upload(req,res,(error) => {
-            if(error){
-                return res.status(400).json({error: error.message})
+        upload(req, res, async (error) => {
+            if (error) {
+                return res.status(400).json({ error: error.message });
             }
 
+            const { name, description, costprice, saleprice, store } = req.body;
 
-            const {name,description,costprice,saleprice,store} = req.body
-
-            const imageUrl = req.file ? `uploads/${req.file.filename}` : ''
-            if(!imageUrl){
-                return res.status(400).json({
-                    error: 'Error uploading image'
-                })
+            if (!req.file) {
+                return res.status(400).json({ error: 'Error uploading image' });
             }
 
-            let product = new Product({
-                name,
-                description,
-                costprice,
-                saleprice,
-                image: imageUrl,
-                store 
-            })
+            try {
+                const imageUrl = await uploadToImageKit(req.file.path, req.file.filename);
 
-            product.save()
-                .then(product => res.json(product))
-                .catch(err => res.status(500).json({ msg: 'Server Error', error: err }));
-            });
+                let product = new Product({
+                    name,
+                    description,
+                    costprice,
+                    saleprice,
+                    image: imageUrl, 
+                    store,
+                });
+
+                product.save()
+                    .then(product => res.json(product))
+                    .catch(err => res.status(500).json({ msg: 'Server Error', error: err }));
+            } catch (uploadError) {
+                console.error('Error uploading image to ImageKit', uploadError);
+                return res.status(500).json({ error: 'Error uploading image to ImageKit' });
+            }
+        });
     } catch (error) {
-        console.log("Error creating product",error.message)
-        return res.status(505,json({error: 'Error creating product'}))
+        console.log("Error creating product", error.message);
+        return res.status(500).json({ error: 'Error creating product' });
     }
 }
 
